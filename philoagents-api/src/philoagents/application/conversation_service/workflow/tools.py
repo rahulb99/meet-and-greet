@@ -10,8 +10,8 @@ retriever = get_retriever(
 
 retriever_tool = create_retriever_tool(
     retriever,
-    "retrieve_philosopher_context",
-    "Search and return information about a specific philosopher. Always use this tool when the user asks you about a philosopher, their works, ideas or historical context.",
+    "retrieve_celeb_context",
+    "Search and return information about a specific celeb. Always use this tool when the user asks you about a celeb, their work, accomplishments or journey.",
 )
 
 tools = [retriever_tool]

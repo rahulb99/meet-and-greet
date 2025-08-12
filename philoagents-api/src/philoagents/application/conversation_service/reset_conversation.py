@@ -8,7 +8,7 @@ async def reset_conversation_state() -> dict:
     """Deletes all conversation state data from MongoDB.
 
     This function removes all stored conversation checkpoints and writes,
-    effectively resetting all philosopher conversations.
+    effectively resetting all celeb conversations.
 
     Returns:
         dict: Status message indicating success or failure with details

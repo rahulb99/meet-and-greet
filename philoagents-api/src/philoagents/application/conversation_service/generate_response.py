@@ -8,31 +8,31 @@ from opik.integrations.langchain import OpikTracer
 from philoagents.application.conversation_service.workflow.graph import (
     create_workflow_graph,
 )
-from philoagents.application.conversation_service.workflow.state import PhilosopherState
+from philoagents.application.conversation_service.workflow.state import CelebState
 from philoagents.config import settings
 
 
 async def get_response(
     messages: str | list[str] | list[dict[str, Any]],
-    philosopher_id: str,
-    philosopher_name: str,
-    philosopher_perspective: str,
-    philosopher_style: str,
-    philosopher_context: str,
+    celeb_id: str,
+    celeb_name: str,
+    celeb_perspective: str,
+    celeb_style: str,
+    celeb_context: str,
     new_thread: bool = False,
-) -> tuple[str, PhilosopherState]:
+) -> tuple[str, CelebState]:
     """Run a conversation through the workflow graph.
 
     Args:
         message: Initial message to start the conversation.
-        philosopher_id: Unique identifier for the philosopher.
-        philosopher_name: Name of the philosopher.
-        philosopher_perspective: Philosopher's perspective on the topic.
-        philosopher_style: Style of conversation (e.g., "Socratic").
-        philosopher_context: Additional context about the philosopher.
+        celeb_id: Unique identifier for the celeb.
+        celeb_name: Name of the celeb.
+        celeb_perspective: Celeb's perspective on the topic.
+        celeb_style: Style of conversation (e.g., "Socratic").
+        celeb_context: Additional context about the celeb.
 
     Returns:
-        tuple[str, PhilosopherState]: A tuple containing:
+        tuple[str, CelebState]: A tuple containing:
             - The content of the last message in the conversation.
             - The final state after running the workflow.
 
@@ -53,7 +53,7 @@ async def get_response(
             opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
 
             thread_id = (
-                philosopher_id if not new_thread else f"{philosopher_id}-{uuid.uuid4()}"
+                celeb_id if not new_thread else f"{celeb_id}-{uuid.uuid4()}"
             )
             config = {
                 "configurable": {"thread_id": thread_id},
@@ -62,37 +62,37 @@ async def get_response(
             output_state = await graph.ainvoke(
                 input={
                     "messages": __format_messages(messages=messages),
-                    "philosopher_name": philosopher_name,
-                    "philosopher_perspective": philosopher_perspective,
-                    "philosopher_style": philosopher_style,
-                    "philosopher_context": philosopher_context,
+                    "celeb_name": celeb_name,
+                    "celeb_perspective": celeb_perspective,
+                    "celeb_style": celeb_style,
+                    "celeb_context": celeb_context,
                 },
                 config=config,
             )
         last_message = output_state["messages"][-1]
-        return last_message.content, PhilosopherState(**output_state)
+        return last_message.content, CelebState(**output_state)
     except Exception as e:
         raise RuntimeError(f"Error running conversation workflow: {str(e)}") from e
 
 
 async def get_streaming_response(
     messages: str | list[str] | list[dict[str, Any]],
-    philosopher_id: str,
-    philosopher_name: str,
-    philosopher_perspective: str,
-    philosopher_style: str,
-    philosopher_context: str,
+    celeb_id: str,
+    celeb_name: str,
+    celeb_perspective: str,
+    celeb_style: str,
+    celeb_context: str,
     new_thread: bool = False,
 ) -> AsyncGenerator[str, None]:
     """Run a conversation through the workflow graph with streaming response.
 
     Args:
         messages: Initial message to start the conversation.
-        philosopher_id: Unique identifier for the philosopher.
-        philosopher_name: Name of the philosopher.
-        philosopher_perspective: Philosopher's perspective on the topic.
-        philosopher_style: Style of conversation (e.g., "Socratic").
-        philosopher_context: Additional context about the philosopher.
+        celeb_id: Unique identifier for the celeb.
+        celeb_name: Name of the celeb.
+        celeb_perspective: Celeb's perspective on the topic.
+        celeb_style: Style of conversation (e.g., "Socratic").
+        celeb_context: Additional context about the celeb.
         new_thread: Whether to create a new conversation thread.
 
     Yields:
@@ -114,7 +114,7 @@ async def get_streaming_response(
             opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
 
             thread_id = (
-                philosopher_id if not new_thread else f"{philosopher_id}-{uuid.uuid4()}"
+                celeb_id if not new_thread else f"{celeb_id}-{uuid.uuid4()}"
             )
             config = {
                 "configurable": {"thread_id": thread_id},
@@ -124,10 +124,10 @@ async def get_streaming_response(
             async for chunk in graph.astream(
                 input={
                     "messages": __format_messages(messages=messages),
-                    "philosopher_name": philosopher_name,
-                    "philosopher_perspective": philosopher_perspective,
-                    "philosopher_style": philosopher_style,
-                    "philosopher_context": philosopher_context,
+                    "celeb_name": celeb_name,
+                    "celeb_perspective": celeb_perspective,
+                    "celeb_style": celeb_style,
+                    "celeb_context": celeb_context,
                 },
                 config=config,
                 stream_mode="messages",

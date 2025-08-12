@@ -6,7 +6,7 @@ from philoagents.config import settings
 from philoagents.domain.prompts import (
     CONTEXT_SUMMARY_PROMPT,
     EXTEND_SUMMARY_PROMPT,
-    PHILOSOPHER_CHARACTER_CARD,
+    CELEB_CHARACTER_CARD,
     SUMMARY_PROMPT,
 )
 
@@ -19,10 +19,10 @@ def get_chat_model(temperature: float = 0.7, model_name: str = settings.GROQ_LLM
     )
 
 
-def get_philosopher_response_chain():
+def get_celeb_response_chain():
     model = get_chat_model()
     model = model.bind_tools(tools)
-    system_message = PHILOSOPHER_CHARACTER_CARD
+    system_message = CELEB_CHARACTER_CARD
 
     prompt = ChatPromptTemplate.from_messages(
         [

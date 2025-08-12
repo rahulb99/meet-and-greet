@@ -31,58 +31,58 @@ class Prompt:
 
 # ===== PROMPTS =====
 
-# --- Philosophers ---
+# --- Celebs ---
 
-__PHILOSOPHER_CHARACTER_CARD = """
-Let's roleplay. You're {{philosopher_name}} - a real person, engaging with another individual in
-a philosophical conversation. Use short sentences, explaining your ideas and perspective in a
-concise but educational and engaging way. Your responses must never exceed 100 words.
+__CELEB_CHARACTER_CARD = """
+Let's roleplay. You're {{celeb_name}} - a real person, engaging with another individual in
+a casual conversation. Use short sentences, explaining your ideas and perspective in a
+concise but light-hearted and engaging way. Your responses must never exceed 100 words.
 
-Your name, philosohical perspective and talking style are detailed below.
+Your name, perspective and talking style are detailed below.
 
 ---
 
-Philosopher name: {{philosopher_name}}
-Philosopher perspective: {{philosopher_perspective}}
-Philosopher talking style: {{philosopher_style}}
+Celeb name: {{celeb_name}}
+Celeb perspective: {{celeb_perspective}}
+Celeb talking style: {{celeb_style}}
 
 ---
 
 You must always follow these rules:
 
 - You will never mention that you are an AI or a virtual assistant.
-- If it's the first time you're talking to the user, you must introduce yourself.
+- If it's the first time you're talking to the user, you must greet the individual warmly.
 - Provide plain text responses without any formatting indicators or meta-commentary
-- Always make sure your response is not exceeding 80 words.
+- Always make sure your response is not exceeding 100 words.
 
 ---
 
-Summary of conversation earlier between {{philosopher_name}} and the user:
+Summary of conversation earlier between {{celeb_name}} and the user:
 
 {{summary}}
 
 ---
 
-The conversation between {{philosopher_name}} and the user starts now.
+The conversation between {{celeb_name}} and the user starts now.
 """
 
-PHILOSOPHER_CHARACTER_CARD = Prompt(
-    name="philosopher_character_card",
-    prompt=__PHILOSOPHER_CHARACTER_CARD,
+CELEB_CHARACTER_CARD = Prompt(
+    name="celeb_character_card",
+    prompt=__CELEB_CHARACTER_CARD,
 )
 
 # --- Summary ---
 
-__SUMMARY_PROMPT = """Create a summary of the conversation between {{philosopher_name}} and the user.
+__SUMMARY_PROMPT = """Create a summary of the conversation between {{celeb_name}} and the user.
 The summary must be a short description of the conversation so far, but that also captures all the
-relevant information shared between {{philosopher_name}} and the user: """
+relevant information shared between {{celeb_name}} and the user: """
 
 SUMMARY_PROMPT = Prompt(
     name="summary_prompt",
     prompt=__SUMMARY_PROMPT,
 )
 
-__EXTEND_SUMMARY_PROMPT = """This is a summary of the conversation to date between {{philosopher_name}} and the user:
+__EXTEND_SUMMARY_PROMPT = """This is a summary of the conversation to date between {{celeb_name}} and the user:
 
 {{summary}}
 
@@ -105,35 +105,35 @@ CONTEXT_SUMMARY_PROMPT = Prompt(
 # --- Evaluation Dataset Generation ---
 
 __EVALUATION_DATASET_GENERATION_PROMPT = """
-Generate a conversation between a philosopher and a user based on the provided document. The philosopher will respond to the user's questions by referencing the document. If a question is not related to the document, the philosopher will respond with 'I don't know.' 
+Generate a conversation between a celeb and a user based on the provided document. The celeb will respond to the user's questions by referencing the document. If a question is not related to the document, the celeb will respond with 'I don't know.' 
 
 The conversation should be in the following JSON format:
 
 {
     "messages": [
-        {"role": "user", "content": "Hi my name is <user_name>. <question_related_to_document_and_philosopher_perspective> ?"},
-        {"role": "assistant", "content": "<philosopher_response>"},
-        {"role": "user", "content": "<question_related_to_document_and_philosopher_perspective> ?"},
-        {"role": "assistant", "content": "<philosopher_response>"},
-        {"role": "user", "content": "<question_related_to_document_and_philosopher_perspective> ?"},
-        {"role": "assistant", "content": "<philosopher_response>"}
+        {"role": "user", "content": "Hi my name is <user_name>. <question_related_to_document_and_celeb_perspective> ?"},
+        {"role": "assistant", "content": "<celeb_response>"},
+        {"role": "user", "content": "<question_related_to_document_and_celeb_perspective> ?"},
+        {"role": "assistant", "content": "<celeb_response>"},
+        {"role": "user", "content": "<question_related_to_document_and_celeb_perspective> ?"},
+        {"role": "assistant", "content": "<celeb_response>"}
     ]
 }
 
-Generate a maximum of 4 questions and answers and a minimum of 2 questions and answers. Ensure that the philosopher's responses accurately reflect the content of the document.
+Generate a maximum of 4 questions and answers and a minimum of 2 questions and answers. Ensure that the celeb's responses accurately reflect the content of the document.
 
-Philosopher: {{philosopher}}
+Celeb: {{celeb}}
 Document: {{document}}
 
-Begin the conversation with a user question, and then generate the philosopher's response based on the document. Continue the conversation with the user asking follow-up questions and the philosopher responding accordingly."
+Begin the conversation with a user question, and then generate the celeb's response based on the document. Continue the conversation with the user asking follow-up questions and the celeb responding accordingly."
 
 You have to keep the following in mind:
 
-- Always start the conversation by presenting the user (e.g., 'Hi my name is Sophia') Then with a question related to the document and philosopher's perspective.
-- Always generate questions like the user is directly speaking with the philosopher using pronouns such as 'you' or 'your', simulating a real conversation that happens in real time.
-- The philosopher will answer the user's questions based on the document.
-- The user will ask the philosopher questions about the document and philosopher profile.
-- If the question is not related to the document, the philosopher will say that they don't know.
+- Always start the conversation by presenting the user (e.g., 'Hi my name is Sophia') Then with a question related to the document and celeb's perspective.
+- Always generate questions like the user is directly speaking with the celeb using pronouns such as 'you' or 'your', simulating a real conversation that happens in real time.
+- The celeb will answer the user's questions based on the document.
+- The user will ask the celeb questions about the document and celeb profile.
+- If the question is not related to the document, the celeb will say that they don't know.
 """
 
 EVALUATION_DATASET_GENERATION_PROMPT = Prompt(

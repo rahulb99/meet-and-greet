@@ -4,74 +4,74 @@ from langchain_community.document_loaders import WebBaseLoader, WikipediaLoader
 from langchain_core.documents import Document
 from tqdm import tqdm
 
-from philoagents.domain.philosopher import Philosopher, PhilosopherExtract
-from philoagents.domain.philosopher_factory import PhilosopherFactory
+from philoagents.domain.celeb import Celeb, CelebExtract
+from philoagents.domain.celeb_factory import CelebFactory
 
 
 def get_extraction_generator(
-    philosophers: list[PhilosopherExtract],
-) -> Generator[tuple[Philosopher, list[Document]], None, None]:
-    """Extract documents for a list of philosophers, yielding one at a time.
+    celebs: list[CelebExtract],
+) -> Generator[tuple[Celeb, list[Document]], None, None]:
+    """Extract documents for a list of celebs, yielding one at a time.
 
     Args:
-        philosophers: A list of PhilosopherExtract objects containing philosopher information.
+        celebs: A list of CelebExtract objects containing celeb information.
 
     Yields:
-        tuple[Philosopher, list[Document]]: A tuple containing the philosopher object and a list of
-            documents extracted for that philosopher.
+        tuple[Celeb, list[Document]]: A tuple containing the celeb object and a list of
+            documents extracted for that celeb.
     """
 
     progress_bar = tqdm(
-        philosophers,
+        celebs,
         desc="Extracting docs",
-        unit="philosopher",
+        unit="celeb",
         bar_format="{desc}: {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] {postfix}",
         ncols=100,
         position=0,
         leave=True,
     )
 
-    philosophers_factory = PhilosopherFactory()
-    for philosopher_extract in progress_bar:
-        philosopher = philosophers_factory.get_philosopher(philosopher_extract.id)
-        progress_bar.set_postfix_str(f"Philosopher: {philosopher.name}")
+    celebs_factory = CelebFactory()
+    for celeb_extract in progress_bar:
+        celeb = celebs_factory.get_celeb(celeb_extract.id)
+        progress_bar.set_postfix_str(f"Celeb: {celeb.name}")
 
-        philosopher_docs = extract(philosopher, philosopher_extract.urls)
+        celeb_docs = extract(celeb, celeb_extract.urls)
 
-        yield (philosopher, philosopher_docs)
+        yield (celeb, celeb_docs)
 
 
-def extract(philosopher: Philosopher, extract_urls: list[str]) -> list[Document]:
-    """Extract documents for a single philosopher from all sources and deduplicate them.
+def extract(celeb: Celeb, extract_urls: list[str]) -> list[Document]:
+    """Extract documents for a single celeb from all sources and deduplicate them.
 
     Args:
-        philosopher: Philosopher object containing philosopher information.
+        celeb: Celeb object containing celeb information.
         extract_urls: List of URLs to extract content from.
 
     Returns:
-        list[Document]: List of deduplicated documents extracted for the philosopher.
+        list[Document]: List of deduplicated documents extracted for the celeb.
     """
 
     docs = []
 
-    docs.extend(extract_wikipedia(philosopher))
-    docs.extend(extract_stanford_encyclopedia_of_philosophy(philosopher, extract_urls))
+    docs.extend(extract_wikipedia(celeb))
+    docs.extend(extract_brittanica(celeb, extract_urls))
 
     return docs
 
 
-def extract_wikipedia(philosopher: Philosopher) -> list[Document]:
-    """Extract documents for a single philosopher from Wikipedia.
+def extract_wikipedia(celeb: Celeb) -> list[Document]:
+    """Extract documents for a single celeb from Wikipedia.
 
     Args:
-        philosopher: Philosopher object containing philosopher information.
+        celeb: Celeb object containing celeb information.
 
     Returns:
-        list[Document]: List of documents extracted from Wikipedia for the philosopher.
+        list[Document]: List of documents extracted from Wikipedia for the celeb.
     """
 
     loader = WikipediaLoader(
-        query=philosopher.name,
+        query=celeb.name,
         lang="en",
         load_max_docs=1,
         doc_content_chars_max=1000000,
@@ -79,23 +79,23 @@ def extract_wikipedia(philosopher: Philosopher) -> list[Document]:
     docs = loader.load()
 
     for doc in docs:
-        doc.metadata["philosopher_id"] = philosopher.id
-        doc.metadata["philosopher_name"] = philosopher.name
+        doc.metadata["celeb_id"] = celeb.id
+        doc.metadata["celeb_name"] = celeb.name
 
     return docs
 
 
-def extract_stanford_encyclopedia_of_philosophy(
-    philosopher: Philosopher, urls: list[str]
+def extract_brittanica(
+    celeb: Celeb, urls: list[str]
 ) -> list[Document]:
-    """Extract documents for a single philosopher from Stanford Encyclopedia of Philosophy.
+    """Extract documents for a single celeb from Stanford Encyclopedia of Philosophy.
 
     Args:
-        philosopher: Philosopher object containing philosopher information.
+        celeb: Celeb object containing celeb information.
         urls: List of URLs to extract content from.
 
     Returns:
-        list[Document]: List of documents extracted from Stanford Encyclopedia for the philosopher.
+        list[Document]: List of documents extracted from Stanford Encyclopedia for the celeb.
     """
 
     def extract_paragraphs_and_headers(soup) -> str:
@@ -132,7 +132,7 @@ def extract_stanford_encyclopedia_of_philosophy(
 
         # Extract remaining paragraphs and headers
         content = []
-        for element in soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6"]):
+        for element in soup.find_all("p.topic-paragraph"):
             content.append(element.get_text())
 
         return "\n\n".join(content)
@@ -148,8 +148,8 @@ def extract_stanford_encyclopedia_of_philosophy(
         text = extract_paragraphs_and_headers(soup)
         metadata = {
             "source": url,
-            "philosopher_id": philosopher.id,
-            "philosopher_name": philosopher.name,
+            "celeb_id": celeb.id,
+            "celeb_name": celeb.name,
         }
 
         if title := soup.find("title"):
@@ -161,12 +161,12 @@ def extract_stanford_encyclopedia_of_philosophy(
 
 
 if __name__ == "__main__":
-    aristotle = PhilosopherFactory().get_philosopher("aristotle")
-    docs = extract_stanford_encyclopedia_of_philosophy(
-        aristotle,
+    trump = CelebFactory().get_celeb("trump")
+    docs = extract_brittanica(
+        trump,
         [
-            "https://plato.stanford.edu/entries/aristotle/",
-            "https://plato.stanford.edu/entries/aristotle/",
+            "https://www.britannica.com/biography/Donald-Trump",
+            "https://www.britannica.com/biography/Donald-Trump"
         ],
     )
     print(docs)

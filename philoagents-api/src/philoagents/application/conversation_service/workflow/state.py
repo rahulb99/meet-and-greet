@@ -1,26 +1,26 @@
 from langgraph.graph import MessagesState
 
 
-class PhilosopherState(MessagesState):
+class CelebState(MessagesState):
     """State class for the LangGraph workflow. It keeps track of the information necessary to maintain a coherent
-    conversation between the Philosopher and the user.
+    conversation between the Celeb and the user.
 
     Attributes:
-        philosopher_context (str): The historical and philosophical context of the philosopher.
-        philosopher_name (str): The name of the philosopher.
-        philosopher_perspective (str): The perspective of the philosopher about AI.
-        philosopher_style (str): The style of the philosopher.
+        celeb_context (str): The historical context of the celeb.
+        celeb_name (str): The name of the celeb.
+        celeb_perspective (str): The perspective of the celeb about AI.
+        celeb_style (str): The style of the celeb.
         summary (str): A summary of the conversation. This is used to reduce the token usage of the model.
     """
 
-    philosopher_context: str
-    philosopher_name: str
-    philosopher_perspective: str
-    philosopher_style: str
+    celeb_context: str
+    celeb_name: str
+    celeb_perspective: str
+    celeb_style: str
     summary: str
 
 
-def state_to_str(state: PhilosopherState) -> str:
+def state_to_str(state: CelebState) -> str:
     if "summary" in state and bool(state["summary"]):
         conversation = state["summary"]
     elif "messages" in state and bool(state["messages"]):
@@ -29,9 +29,9 @@ def state_to_str(state: PhilosopherState) -> str:
         conversation = ""
 
     return f"""
-PhilosopherState(philosopher_context={state["philosopher_context"]}, 
-philosopher_name={state["philosopher_name"]}, 
-philosopher_perspective={state["philosopher_perspective"]}, 
-philosopher_style={state["philosopher_style"]}, 
+CelebState(celeb_context={state["celeb_context"]}, 
+celeb_name={state["celeb_name"]}, 
+celeb_perspective={state["celeb_perspective"]}, 
+celeb_style={state["celeb_style"]}, 
 conversation={conversation})
         """

@@ -4,7 +4,7 @@ import click
 
 from philoagents.application import LongTermMemoryCreator
 from philoagents.config import settings
-from philoagents.domain.philosopher import PhilosopherExtract
+from philoagents.domain.celeb import CelebExtract
 
 
 @click.command()
@@ -12,18 +12,18 @@ from philoagents.domain.philosopher import PhilosopherExtract
     "--metadata-file",
     type=click.Path(exists=True, path_type=Path),
     default=settings.EXTRACTION_METADATA_FILE_PATH,
-    help="Path to the philosophers extraction metadata JSON file.",
+    help="Path to the celebs extraction metadata JSON file.",
 )
 def main(metadata_file: Path) -> None:
-    """CLI command to create long-term memory for philosophers.
+    """CLI command to create long-term memory for celebs.
 
     Args:
-        metadata_file: Path to the philosophers extraction metadata JSON file.
+        metadata_file: Path to the celebs extraction metadata JSON file.
     """
-    philosophers = PhilosopherExtract.from_json(metadata_file)
+    celebs = CelebExtract.from_json(metadata_file)
 
     long_term_memory_creator = LongTermMemoryCreator.build_from_settings()
-    long_term_memory_creator(philosophers)
+    long_term_memory_creator(celebs)
 
 
 if __name__ == "__main__":

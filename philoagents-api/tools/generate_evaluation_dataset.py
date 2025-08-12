@@ -5,7 +5,7 @@ from loguru import logger
 
 from philoagents.application.evaluation import EvaluationDatasetGenerator
 from philoagents.config import settings
-from philoagents.domain.philosopher import PhilosopherExtract
+from philoagents.domain.celeb import CelebExtract
 
 
 @click.command()
@@ -13,7 +13,7 @@ from philoagents.domain.philosopher import PhilosopherExtract
     "--metadata-file",
     type=click.Path(exists=True, path_type=Path),
     default=settings.EXTRACTION_METADATA_FILE_PATH,
-    help="Path to the metadata file containing philosopher extracts",
+    help="Path to the metadata file containing celeb extracts",
 )
 @click.option(
     "--temperature",
@@ -29,24 +29,24 @@ from philoagents.domain.philosopher import PhilosopherExtract
 )
 def main(metadata_file: Path, temperature: float, max_samples: int) -> None:
     """
-    Generate an evaluation dataset from philosopher extracts.
+    Generate an evaluation dataset from celeb extracts.
 
     Args:
-        metadata_file: Path to the metadata file containing philosopher extracts
+        metadata_file: Path to the metadata file containing celeb extracts
         temperature: Temperature parameter for generation
         max_samples: Maximum number of samples to generate
     """
-    philosophers = PhilosopherExtract.from_json(metadata_file)
+    celebs = CelebExtract.from_json(metadata_file)
 
     logger.info(
         f"Generating evaluation dataset with temperature {temperature} and {max_samples} samples."
     )
-    logger.info(f"Total philosophers: {len(philosophers)}")
+    logger.info(f"Total celebs: {len(celebs)}")
 
     evaluation_dataset_generator = EvaluationDatasetGenerator(
         temperature=temperature, max_samples=max_samples
     )
-    evaluation_dataset_generator(philosophers)
+    evaluation_dataset_generator(celebs)
 
 
 if __name__ == "__main__":

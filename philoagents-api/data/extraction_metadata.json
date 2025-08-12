@@ -1,54 +1,44 @@
 [
     {
-        "id": "plato",
+        "id": "trump",
         "urls": [
-            "https://plato.stanford.edu/entries/plato/"
+            "https://www.britannica.com/biography/Donald-Trump"
         ]
     },
     {
-        "id": "aristotle",
+        "id": "srk",
         "urls": [
-            "https://plato.stanford.edu/entries/aristotle/"
+            "https://www.britannica.com/biography/Shah-Rukh-Khan"
         ]
     },
     {
-        "id": "socrates",
+        "id": "modi",
         "urls": [
-            "https://plato.stanford.edu/entries/socrates/"
+            "https://www.britannica.com/biography/Narendra-Modi"
         ]
     },
     {
-        "id": "descartes",
+        "id": "cr7",
         "urls": [
-            "https://plato.stanford.edu/entries/descartes/"
+            "https://www.britannica.com/biography/Cristiano-Ronaldo"
         ]
     },
     {
-        "id": "leibniz",
+        "id": "bill_gates",
         "urls": [
-            "https://plato.stanford.edu/entries/leibniz/"
+            "https://www.britannica.com/biography/Bill-Gates"
         ]
     },
     {
-        "id": "ada_lovelace",
-        "urls": []
-    },
-    {
-        "id": "turing",
+        "id": "mr_beast",
         "urls": [
-            "https://plato.stanford.edu/entries/turing/"
+            "https://www.britannica.com/biography/Mr-Beast"
         ]
     },
     {
-        "id": "searle",
-        "urls": []
-    },
-    {
-        "id": "chomsky",
-        "urls": []
-    },
-    {
-        "id": "dennett",
-        "urls": []
+        "id": "sydney_sweeney",
+        "urls": [
+            "https://www.britannica.com/biography/Sydney-Sweeney"
+        ]
     }
 ]

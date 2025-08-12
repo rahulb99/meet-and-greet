@@ -12,7 +12,7 @@ from philoagents.application.conversation_service.generate_response import (
 from philoagents.application.conversation_service.reset_conversation import (
     reset_conversation_state,
 )
-from philoagents.domain.philosopher_factory import PhilosopherFactory
+from philoagents.domain.celeb_factory import CelebFactory
 
 from .opik_utils import configure
 
@@ -42,22 +42,22 @@ app.add_middleware(
 
 class ChatMessage(BaseModel):
     message: str
-    philosopher_id: str
+    celeb_id: str
 
 
 @app.post("/chat")
 async def chat(chat_message: ChatMessage):
     try:
-        philosopher_factory = PhilosopherFactory()
-        philosopher = philosopher_factory.get_philosopher(chat_message.philosopher_id)
+        celeb_factory = CelebFactory()
+        celeb = celeb_factory.get_celeb(chat_message.celeb_id)
 
         response, _ = await get_response(
             messages=chat_message.message,
-            philosopher_id=chat_message.philosopher_id,
-            philosopher_name=philosopher.name,
-            philosopher_perspective=philosopher.perspective,
-            philosopher_style=philosopher.style,
-            philosopher_context="",
+            celeb_id=chat_message.celeb_id,
+            celeb_name=celeb.name,
+            celeb_perspective=celeb.perspective,
+            celeb_style=celeb.style,
+            celeb_context="",
         )
         return {"response": response}
     except Exception as e:
@@ -75,28 +75,28 @@ async def websocket_chat(websocket: WebSocket):
         while True:
             data = await websocket.receive_json()
 
-            if "message" not in data or "philosopher_id" not in data:
+            if "message" not in data or "celeb_id" not in data:
                 await websocket.send_json(
                     {
-                        "error": "Invalid message format. Required fields: 'message' and 'philosopher_id'"
+                        "error": "Invalid message format. Required fields: 'message' and 'celeb_id'"
                     }
                 )
                 continue
 
             try:
-                philosopher_factory = PhilosopherFactory()
-                philosopher = philosopher_factory.get_philosopher(
-                    data["philosopher_id"]
+                celeb_factory = CelebFactory()
+                celeb = celeb_factory.get_celeb(
+                    data["celeb_id"]
                 )
 
                 # Use streaming response instead of get_response
                 response_stream = get_streaming_response(
                     messages=data["message"],
-                    philosopher_id=data["philosopher_id"],
-                    philosopher_name=philosopher.name,
-                    philosopher_perspective=philosopher.perspective,
-                    philosopher_style=philosopher.style,
-                    philosopher_context="",
+                    celeb_id=data["celeb_id"],
+                    celeb_name=celeb.name,
+                    celeb_perspective=celeb.perspective,
+                    celeb_style=celeb.style,
+                    celeb_context="",
                 )
 
                 # Send initial message to indicate streaming has started

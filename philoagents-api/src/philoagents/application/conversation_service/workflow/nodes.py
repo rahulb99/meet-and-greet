@@ -5,26 +5,26 @@ from langgraph.prebuilt import ToolNode
 from philoagents.application.conversation_service.workflow.chains import (
     get_context_summary_chain,
     get_conversation_summary_chain,
-    get_philosopher_response_chain,
+    get_celeb_response_chain,
 )
-from philoagents.application.conversation_service.workflow.state import PhilosopherState
+from philoagents.application.conversation_service.workflow.state import CelebState
 from philoagents.application.conversation_service.workflow.tools import tools
 from philoagents.config import settings
 
 retriever_node = ToolNode(tools)
 
 
-async def conversation_node(state: PhilosopherState, config: RunnableConfig):
+async def conversation_node(state: CelebState, config: RunnableConfig):
     summary = state.get("summary", "")
-    conversation_chain = get_philosopher_response_chain()
+    conversation_chain = get_celeb_response_chain()
 
     response = await conversation_chain.ainvoke(
         {
             "messages": state["messages"],
-            "philosopher_context": state["philosopher_context"],
-            "philosopher_name": state["philosopher_name"],
-            "philosopher_perspective": state["philosopher_perspective"],
-            "philosopher_style": state["philosopher_style"],
+            "celeb_context": state["celeb_context"],
+            "celeb_name": state["celeb_name"],
+            "celeb_perspective": state["celeb_perspective"],
+            "celeb_style": state["celeb_style"],
             "summary": summary,
         },
         config,
@@ -33,14 +33,14 @@ async def conversation_node(state: PhilosopherState, config: RunnableConfig):
     return {"messages": response}
 
 
-async def summarize_conversation_node(state: PhilosopherState):
+async def summarize_conversation_node(state: CelebState):
     summary = state.get("summary", "")
     summary_chain = get_conversation_summary_chain(summary)
 
     response = await summary_chain.ainvoke(
         {
             "messages": state["messages"],
-            "philosopher_name": state["philosopher_name"],
+            "celeb_name": state["celeb_name"],
             "summary": summary,
         }
     )
@@ -52,7 +52,7 @@ async def summarize_conversation_node(state: PhilosopherState):
     return {"summary": response.content, "messages": delete_messages}
 
 
-async def summarize_context_node(state: PhilosopherState):
+async def summarize_context_node(state: CelebState):
     context_summary_chain = get_context_summary_chain()
 
     response = await context_summary_chain.ainvoke(
@@ -65,5 +65,5 @@ async def summarize_context_node(state: PhilosopherState):
     return {}
 
 
-async def connector_node(state: PhilosopherState):
+async def connector_node(state: CelebState):
     return {}

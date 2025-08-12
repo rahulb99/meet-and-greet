@@ -11,7 +11,7 @@ from philoagents.application.data.extract import get_extraction_generator
 from philoagents.config import settings
 from philoagents.domain import prompts
 from philoagents.domain.evaluation import EvaluationDataset, EvaluationDatasetSample
-from philoagents.domain.philosopher import PhilosopherExtract
+from philoagents.domain.celeb import CelebExtract
 
 
 class EvaluationDatasetGenerator:
@@ -22,21 +22,21 @@ class EvaluationDatasetGenerator:
         self.__chain = self.__build_chain()
         self.__splitter = self.__build_splitter()
 
-    def __call__(self, philosophers: list[PhilosopherExtract]) -> EvaluationDataset:
+    def __call__(self, celebs: list[CelebExtract]) -> EvaluationDataset:
         dataset_samples = []
-        extraction_generator = get_extraction_generator(philosophers)
-        for philosopher, docs in extraction_generator:
+        extraction_generator = get_extraction_generator(celebs)
+        for celeb, docs in extraction_generator:
             chunks = self.__splitter.split_documents(docs)
             for chunk in chunks[:4]:
                 try:
                     dataset_sample: EvaluationDatasetSample = self.__chain.invoke(
-                        {"philosopher": philosopher, "document": chunk.page_content}
+                        {"celeb": celeb, "document": chunk.page_content}
                     )
                 except Exception as e:
                     logger.error(f"Error generating dataset sample: {e}")
                     continue
 
-                dataset_sample.philosopher_id = philosopher.id
+                dataset_sample.celeb_id = celeb.id
 
                 if self.__validate_sample(dataset_sample):
                     dataset_samples.append(dataset_sample)

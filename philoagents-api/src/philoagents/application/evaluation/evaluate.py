@@ -14,39 +14,39 @@ from opik.evaluation.metrics import (
 from philoagents.application.conversation_service.generate_response import get_response
 from philoagents.application.conversation_service.workflow import state_to_str
 from philoagents.config import settings
-from philoagents.domain.philosopher_factory import PhilosopherFactory
+from philoagents.domain.celeb_factory import CelebFactory
 
 
 async def evaluation_task(x: dict) -> dict:
-    """Calls agentic app logic to evaluate philosopher responses.
+    """Calls agentic app logic to evaluate celeb responses.
 
     Args:
         x: Dictionary containing evaluation data with the following keys:
             messages: List of conversation messages where all but the last are inputs
                 and the last is the expected output
-            philosopher_id: ID of the philosopher to use
+            celeb_id: ID of the celeb to use
 
     Returns:
         dict: Dictionary with evaluation results containing:
             input: Original input messages
             context: Context used for generating the response
-            output: Generated response from philosopher
+            output: Generated response from celeb
             expected_output: Expected answer for comparison
     """
 
-    philosopher_factory = PhilosopherFactory()
-    philosopher = philosopher_factory.get_philosopher(x["philosopher_id"])
+    celeb_factory = CelebFactory()
+    celeb = celeb_factory.get_celeb(x["celeb_id"])
 
     input_messages = x["messages"][:-1]
     expected_output_message = x["messages"][-1]
 
     response, latest_state = await get_response(
         messages=input_messages,
-        philosopher_id=philosopher.id,
-        philosopher_name=philosopher.name,
-        philosopher_perspective=philosopher.perspective,
-        philosopher_style=philosopher.style,
-        philosopher_context="",
+        celeb_id=celeb.id,
+        celeb_name=celeb.name,
+        celeb_perspective=celeb.perspective,
+        celeb_style=celeb.style,
+        celeb_context="",
         new_thread=True,
     )
     context = state_to_str(latest_state)
@@ -63,7 +63,7 @@ def get_used_prompts() -> list[opik.Prompt]:
     client = opik.Opik()
 
     prompts = [
-        client.get_prompt(name="philosopher_character_card"),
+        client.get_prompt(name="celeb_character_card"),
         client.get_prompt(name="summary_prompt"),
         client.get_prompt(name="extend_summary_prompt"),
     ]
@@ -84,7 +84,7 @@ def evaluate_agent(
 
     Args:
         dataset: Dataset containing evaluation examples.
-            Must contain messages and philosopher_id.
+            Must contain messages and celeb_id.
         workers: Number of parallel workers to use for evaluation.
             Defaults to 2.
         nb_samples: Optional number of samples to evaluate.

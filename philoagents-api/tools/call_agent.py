@@ -6,7 +6,7 @@ import click
 from philoagents.application.conversation_service.generate_response import (
     get_streaming_response,
 )
-from philoagents.domain.philosopher_factory import PhilosopherFactory
+from philoagents.domain.celeb_factory import CelebFactory
 
 
 def async_command(f):
@@ -21,10 +21,10 @@ def async_command(f):
 
 @click.command()
 @click.option(
-    "--philosopher-id",
+    "--celeb-id",
     type=str,
     required=True,
-    help="ID of the philosopher to call.",
+    help="ID of the celeb to call.",
 )
 @click.option(
     "--query",
@@ -33,29 +33,29 @@ def async_command(f):
     help="Query to call the agent with.",
 )
 @async_command
-async def main(philosopher_id: str, query: str) -> None:
-    """CLI command to query a philosopher.
+async def main(celeb_id: str, query: str) -> None:
+    """CLI command to query a celeb.
 
     Args:
-        philosopher_id: ID of the philosopher to call.
+        celeb_id: ID of the celeb to call.
         query: Query to call the agent with.
     """
 
-    philosopher_factory = PhilosopherFactory()
-    philosopher = philosopher_factory.get_philosopher(philosopher_id)
+    celeb_factory = CelebFactory()
+    celeb = celeb_factory.get_celeb(celeb_id)
 
     print(
-        f"\033[32mCalling agent with philosopher_id: `{philosopher_id}` and query: `{query}`\033[0m"
+        f"\033[32mCalling agent with celeb_id: `{celeb_id}` and query: `{query}`\033[0m"
     )
     print("\033[32mResponse:\033[0m")
     print("\033[32m--------------------------------\033[0m")
     async for chunk in get_streaming_response(
         messages=query,
-        philosopher_id=philosopher_id,
-        philosopher_name=philosopher.name,
-        philosopher_perspective=philosopher.perspective,
-        philosopher_style=philosopher.style,
-        philosopher_context="",
+        celeb_id=celeb_id,
+        celeb_name=celeb.name,
+        celeb_perspective=celeb.perspective,
+        celeb_style=celeb.style,
+        celeb_context="",
     ):
         print(f"\033[32m{chunk}\033[0m", end="", flush=True)
     print("\033[32m--------------------------------\033[0m")

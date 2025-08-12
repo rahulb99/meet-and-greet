@@ -2,12 +2,12 @@ from typing_extensions import Literal
 
 from langgraph.graph import END
 
-from philoagents.application.conversation_service.workflow.state import PhilosopherState
+from philoagents.application.conversation_service.workflow.state import CelebState
 from philoagents.config import settings
 
 
 def should_summarize_conversation(
-    state: PhilosopherState,
+    state: CelebState,
 ) -> Literal["summarize_conversation_node", "__end__"]:
     messages = state["messages"]
 
