@@ -143,7 +143,7 @@ export class MainMenu extends Scene {
         
         const instructions = [
             'Arrow keys for moving',
-            'SPACE for talking to philosophers',
+            'SPACE for talking to celebs',
             'ESC for closing the dialogue'
         ];
         

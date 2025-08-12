@@ -30,22 +30,22 @@ class ApiService {
     return response.json();
   }
 
-  async sendMessage(philosopher, message) {
+  async sendMessage(celeb, message) {
     try {
       const data = await this.request('/chat', 'POST', {
         message,
-        philosopher_id: philosopher.id
+        celeb_id: celeb.id
       });
       
       return data.response;
     } catch (error) {
       console.error('Error sending message to API:', error);
-      return this.getFallbackResponse(philosopher);
+      return this.getFallbackResponse(celeb);
     }
   }
 
-  getFallbackResponse(philosopher) {
-    return `I'm sorry, ${philosopher.name || 'the philosopher'} is unavailable at the moment. Please try again later.`;
+  getFallbackResponse(celeb) {
+    return `I'm sorry, ${celeb.name || 'the celeb'} is unavailable at the moment. Please try again later.`;
   }
 
   async resetMemory() {

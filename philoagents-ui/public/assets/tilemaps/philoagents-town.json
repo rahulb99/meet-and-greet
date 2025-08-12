@@ -175,7 +175,7 @@
                 {
                  "height":0,
                  "id":277,
-                 "name":"Socrates",
+                 "name":"Donald Trump",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -187,7 +187,7 @@
                 {
                  "height":0,
                  "id":278,
-                 "name":"Plato",
+                 "name":"Shah Rukh Khan",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -199,7 +199,7 @@
                 {
                  "height":0,
                  "id":279,
-                 "name":"Aristotle",
+                 "name":"Narendra Modi",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -210,32 +210,8 @@
                 }, 
                 {
                  "height":0,
-                 "id":280,
-                 "name":"Descartes",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":991.87742522152,
-                 "y":533.554727846433
-                }, 
-                {
-                 "height":0,
-                 "id":281,
-                 "name":"Leibniz",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":622.794984557813,
-                 "y":560.979163771918
-                }, 
-                {
-                 "height":0,
                  "id":282,
-                 "name":"Ada Lovelace",
+                 "name":"Sydney Sweeney",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -258,20 +234,8 @@
                 }, 
                 {
                  "height":0,
-                 "id":284,
-                 "name":"Paul",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":1173.68913016252,
-                 "y":366.159200422966
-                }, 
-                {
-                 "height":0,
                  "id":285,
-                 "name":"Turing",
+                 "name":"Cristiano Ronaldo",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -283,7 +247,7 @@
                 {
                  "height":0,
                  "id":287,
-                 "name":"Searle",
+                 "name":"Bill Gates",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -295,26 +259,14 @@
                 {
                  "height":0,
                  "id":288,
-                 "name":"Chomsky",
+                 "name":"Mr. Beast",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":215.290772941734,
-                 "y":119.903677328929
-                }, 
-                {
-                 "height":0,
-                 "id":289,
-                 "name":"Dennett",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":769.497671343212,
-                 "y":114.751046525873
+                 "x":622.794984557813,
+                 "y":560.979163771918
                 }],
          "opacity":1,
          "type":"objectgroup",

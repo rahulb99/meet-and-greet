@@ -6,7 +6,7 @@ class DialogueManager {
     // Core properties
     this.scene = scene;
     this.dialogueBox = null;
-    this.activePhilosopher = null;
+    this.activeCeleb = null;
     
     // State management
     this.isTyping = false;
@@ -73,7 +73,7 @@ class DialogueManager {
       this.dialogueBox.show('...', true);
       this.stopCursorBlink();
       
-      if (this.activePhilosopher.defaultMessage) {
+      if (this.activeCeleb.defaultMessage) {
         await this.handleDefaultMessage();
       } else {
         await this.handleWebSocketMessage();
@@ -89,7 +89,7 @@ class DialogueManager {
   // === Message Processing ===
   
   async handleDefaultMessage() {
-    const apiResponse = this.activePhilosopher.defaultMessage;
+    const apiResponse = this.activeCeleb.defaultMessage;
     this.dialogueBox.show('', true);
     await this.streamText(apiResponse);
   }
@@ -129,7 +129,7 @@ class DialogueManager {
     };
     
     await WebSocketApiService.sendMessage(
-      this.activePhilosopher,
+      this.activeCeleb,
       this.currentMessage,
       callbacks
     );
@@ -149,7 +149,7 @@ class DialogueManager {
 
   async fallbackToRegularApi() {
     const apiResponse = await ApiService.sendMessage(
-      this.activePhilosopher, 
+      this.activeCeleb, 
       this.currentMessage
     );
     await this.streamText(apiResponse);
@@ -197,10 +197,10 @@ class DialogueManager {
 
   // === Dialogue Flow Control ===
   
-  startDialogue(philosopher) {
+  startDialogue(celeb) {
     this.cancelDisconnectTimeout();
     
-    this.activePhilosopher = philosopher;
+    this.activeCeleb = celeb;
     this.isTyping = true;
     this.currentMessage = '';
     

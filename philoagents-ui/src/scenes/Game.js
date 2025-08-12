@@ -13,9 +13,9 @@ export class Game extends Scene
         this.cursors = null;
         this.dialogueBox = null;
         this.spaceKey = null;
-        this.activePhilosopher = null;
+        this.activeCeleb = null;
         this.dialogueManager = null;
-        this.philosophers = [];
+        this.celebs = [];
         this.labelsVisible = true;
     }
 
@@ -27,7 +27,7 @@ export class Game extends Scene
         let screenPadding = 20;
         let maxDialogueHeight = 200;
 
-        this.createPhilosophers(map, layers);
+        this.createCelebs(map, layers);
 
         this.setupPlayer(map, layers.worldLayer);
         const camera = this.setupCamera(map);
@@ -57,37 +57,20 @@ export class Game extends Scene
         this.dialogueManager.initialize(this.dialogueBox);
     }
 
-    createPhilosophers(map, layers) {
-        const philosopherConfigs = [
-            { id: "socrates", name: "Socrates", defaultDirection: "right", roamRadius: 800 },
-            { id: "aristotle", name: "Aristotle", defaultDirection: "right", roamRadius: 700 },
-            { id: "plato", name: "Plato", defaultDirection: "front", roamRadius: 750 },
-            { id: "descartes", name: "Descartes", defaultDirection: "front", roamRadius: 650 },
-            { id: "leibniz", name: "Leibniz", defaultDirection: "front", roamRadius: 720 },
-            { id: "ada_lovelace", name: "Ada Lovelace", defaultDirection: "front", roamRadius: 680 },
-            { id: "turing", name: "Turing", defaultDirection: "front", roamRadius: 770 },
-            { id: "searle", name: "Searle", defaultDirection: "front", roamRadius: 730 },
-            { id: "chomsky", name: "Chomsky", defaultDirection: "front", roamRadius: 690 },
-            { id: "dennett", name: "Dennett", defaultDirection: "front", roamRadius: 710 },
-            { 
-                id: "miguel", 
-                name: "Miguel", 
-                defaultDirection: "front", 
-                roamRadius: 300,
-                defaultMessage: "Hey there! I'm Miguel, but you can call me Mr Agent. I'd love to chat, but I'm currently writing my Substack article for tomorrow. If you're curious about my work, take a look at The Neural Maze!" 
-            },
-            { 
-                id: "paul", 
-                name: "Paul", 
-                defaultDirection: "front",
-                roamRadius: 300,
-                defaultMessage: "Hey, I'm busy teaching my cat AI with my latest course. I can't talk right now. Check out Decoding ML for more on my thoughts." 
-            }
+    createCelebs(map, layers) {
+        const celebConfigs = [
+            { id: "trump", name: "Donald Trump", defaultDirection: "right", roamRadius: 800 },
+            { id: "modi", name: "Narendra Modi", defaultDirection: "right", roamRadius: 700 },
+            { id: "srk", name: "Shah Rukh Khan", defaultDirection: "front", roamRadius: 750 },
+            { id: "sydney_sweeney", name: "Sydney Sweeney", defaultDirection: "front", roamRadius: 680 },
+            { id: "cr7", name: "Cristiano Ronaldo", defaultDirection: "front", roamRadius: 770 },
+            { id: "bill_gates", name: "Bill Gates", defaultDirection: "front", roamRadius: 730 },
+            { id: "mr_beast", name: "Mr. Beast", defaultDirection: "front", roamRadius: 690 }
         ];
 
-        this.philosophers = [];
+        this.celebs = [];
         
-        philosopherConfigs.forEach(config => {
+        celebConfigs.forEach(config => {
             const spawnPoint = map.findObject("Objects", (obj) => obj.name === config.name);
             
             this[config.id] = new Character(this, {
@@ -105,44 +88,44 @@ export class Game extends Scene
                 handleCollisions: true
             });
             
-            this.philosophers.push(this[config.id]);
+            this.celebs.push(this[config.id]);
         });
 
-        // Make all philosopher labels visible initially
-        this.togglePhilosopherLabels(true);
+        // Make all celeb labels visible initially
+        this.toggleCelebLabels(true);
 
-        // Add collisions between philosophers
-        for (let i = 0; i < this.philosophers.length; i++) {
-            for (let j = i + 1; j < this.philosophers.length; j++) {
+        // Add collisions between celebs
+        for (let i = 0; i < this.celebs.length; i++) {
+            for (let j = i + 1; j < this.celebs.length; j++) {
                 this.physics.add.collider(
-                    this.philosophers[i].sprite, 
-                    this.philosophers[j].sprite
+                    this.celebs[i].sprite, 
+                    this.celebs[j].sprite
                 );
             }
         }
     }
 
-    checkPhilosopherInteraction() {
-        let nearbyPhilosopher = null;
+    checkCelebInteraction() {
+        let nearbyCeleb = null;
 
-        for (const philosopher of this.philosophers) {
-            if (philosopher.isPlayerNearby(this.player)) {
-                nearbyPhilosopher = philosopher;
+        for (const celeb of this.celebs) {
+            if (celeb.isPlayerNearby(this.player)) {
+                nearbyCeleb = celeb;
                 break;
             }
         }
         
-        if (nearbyPhilosopher) {
+        if (nearbyCeleb) {
             if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
                 if (!this.dialogueBox.isVisible()) {
-                    this.dialogueManager.startDialogue(nearbyPhilosopher);
+                    this.dialogueManager.startDialogue(nearbyCeleb);
                 } else if (!this.dialogueManager.isTyping) {
                     this.dialogueManager.continueDialogue();
                 }
             }
             
             if (this.dialogueBox.isVisible()) {
-                nearbyPhilosopher.facePlayer(this.player);
+                nearbyCeleb.facePlayer(this.player);
             }
         } else if (this.dialogueBox.isVisible()) {
             this.dialogueManager.closeDialogue();
@@ -178,8 +161,8 @@ export class Game extends Scene
 
         this.physics.add.collider(this.player, worldLayer);
         
-        this.philosophers.forEach(philosopher => {
-            this.physics.add.collider(this.player, philosopher.sprite);
+        this.celebs.forEach(celeb => {
+            this.physics.add.collider(this.player, celeb.sprite);
         });
 
         this.createPlayerAnimations();
@@ -268,10 +251,10 @@ export class Game extends Scene
             this.updatePlayerMovement();
         }
         
-        this.checkPhilosopherInteraction();
+        this.checkCelebInteraction();
         
-        this.philosophers.forEach(philosopher => {
-            philosopher.update(this.player, isInDialogue);
+        this.celebs.forEach(celeb => {
+            celeb.update(this.player, isInDialogue);
         });
         
         if (this.controls) {
@@ -335,10 +318,10 @@ export class Game extends Scene
         }
     }
 
-    togglePhilosopherLabels(visible) {
-        this.philosophers.forEach(philosopher => {
-            if (philosopher.nameLabel) {
-                philosopher.nameLabel.setVisible(visible);
+    toggleCelebLabels(visible) {
+        this.celebs.forEach(celeb => {
+            if (celeb.nameLabel) {
+                celeb.nameLabel.setVisible(visible);
             }
         });
     }
