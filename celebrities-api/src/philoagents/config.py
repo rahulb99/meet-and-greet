@@ -13,16 +13,16 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str
     GROQ_LLM_MODEL: str = "llama-3.3-70b-versatile"
     GROQ_LLM_MODEL_CONTEXT_SUMMARY: str = "llama-3.1-8b-instant"
-    
+
     # --- OpenAI Configuration (Required for evaluation) ---
     OPENAI_API_KEY: str
 
     # --- MongoDB Configuration ---
     MONGO_URI: str = Field(
-        default="mongodb://philoagents:philoagents@local_dev_atlas:27017/?directConnection=true",
+        default="mongodb://celebrities:celebrities@local_dev_atlas:27017/?directConnection=true",
         description="Connection URI for the local MongoDB Atlas instance.",
     )
-    MONGO_DB_NAME: str = "philoagents"
+    MONGO_DB_NAME: str = "celebrities"
     MONGO_STATE_CHECKPOINT_COLLECTION: str = "celeb_state_checkpoints"
     MONGO_STATE_WRITES_COLLECTION: str = "celeb_state_writes"
     MONGO_LONG_TERM_MEMORY_COLLECTION: str = "celeb_long_term_memory"
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
         default=None, description="API key for Comet ML and Opik services."
     )
     COMET_PROJECT: str = Field(
-        default="philoagents_course",
+        default="meet-and-greet",
         description="Project name for Comet ML and Opik tracking.",
     )
 
