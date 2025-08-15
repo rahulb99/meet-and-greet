@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str
     GROQ_LLM_MODEL: str = "llama-3.3-70b-versatile"
     GROQ_LLM_MODEL_CONTEXT_SUMMARY: str = "llama-3.1-8b-instant"
+    GROQ_LLM_MODEL_SUMMARY: str = "llama-3.1-8b-instant"
 
     # --- OpenAI Configuration (Required for evaluation) ---
     OPENAI_API_KEY: str
@@ -43,7 +44,7 @@ class Settings(BaseSettings):
     # --- RAG Configuration ---
     RAG_TEXT_EMBEDDING_MODEL_ID: str = "sentence-transformers/all-MiniLM-L6-v2"
     RAG_TEXT_EMBEDDING_MODEL_DIM: int = 384
-    RAG_TOP_K: int = 3
+    RAG_TOP_K: int = 5
     RAG_DEVICE: str = "cpu"
     RAG_CHUNK_SIZE: int = 256
 

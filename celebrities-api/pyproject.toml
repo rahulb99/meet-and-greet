@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.115.8",
     "langchain-core>=0.3.34",
@@ -23,6 +23,8 @@ dependencies = [
     "ipykernel>=6.29.5",
     "pydantic>=2.10.6",
     "datasketch>=1.6.5",
+    "duckduckgo-search>=8.1.1",
+    "sentence-transformers>=5.1.0",
 ]
 
 [dependency-groups]
