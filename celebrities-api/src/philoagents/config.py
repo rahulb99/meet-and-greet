@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # --- PostgreSQL Configuration ---
     POSTGRES_URI: str = Field(
-        default="postgres://celebrities:celebrities@postgres:5432/celebrities?sslmode=disable",
+        default="postgresql+asyncpg://celebrities:celebrities@postgres:5432/celebrities",
         description="Connection URI for the PostgreSQL instance.",
     )
     POSTGRES_DB_NAME: str = "celebrities"
