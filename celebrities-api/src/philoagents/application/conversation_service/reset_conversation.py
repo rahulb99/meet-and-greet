@@ -1,51 +1,71 @@
+import asyncpg
 from loguru import logger
-from pymongo import MongoClient
 
 from philoagents.config import settings
 
 
 async def reset_conversation_state() -> dict:
-    """Deletes all conversation state data from MongoDB.
+    """Deletes all conversation state data from PostgreSQL.
 
     This function removes all stored conversation checkpoints and writes,
     effectively resetting all celeb conversations.
 
     Returns:
         dict: Status message indicating success or failure with details
-              about which collections were deleted
+              about which tables were cleared
 
     Raises:
-        Exception: If there's an error connecting to MongoDB or deleting collections
+        Exception: If there's an error connecting to PostgreSQL or clearing tables
     """
     try:
-        client = MongoClient(settings.MONGO_URI)
-        db = client[settings.MONGO_DB_NAME]
+        # Parse the PostgreSQL URI to extract connection parameters
+        import urllib.parse as urlparse
 
-        collections_deleted = []
+        parsed = urlparse.urlparse(settings.POSTGRES_URI)
 
-        if settings.MONGO_STATE_CHECKPOINT_COLLECTION in db.list_collection_names():
-            db.drop_collection(settings.MONGO_STATE_CHECKPOINT_COLLECTION)
-            collections_deleted.append(settings.MONGO_STATE_CHECKPOINT_COLLECTION)
-            logger.info(
-                f"Deleted collection: {settings.MONGO_STATE_CHECKPOINT_COLLECTION}"
+        conn = await asyncpg.connect(
+            user=parsed.username,
+            password=parsed.password,
+            database=parsed.path[1:],  # Remove leading '/'
+            host=parsed.hostname,
+            port=parsed.port or 5432,
+        )
+
+        tables_cleared = []
+
+        # Clear checkpoints table
+        try:
+            await conn.execute(
+                f"DELETE FROM {settings.POSTGRES_STATE_CHECKPOINT_TABLE}"
+            )
+            tables_cleared.append(settings.POSTGRES_STATE_CHECKPOINT_TABLE)
+            logger.info(f"Cleared table: {settings.POSTGRES_STATE_CHECKPOINT_TABLE}")
+        except Exception:
+            logger.warning(
+                f"Table {settings.POSTGRES_STATE_CHECKPOINT_TABLE} does not exist or couldn't be cleared"
             )
 
-        if settings.MONGO_STATE_WRITES_COLLECTION in db.list_collection_names():
-            db.drop_collection(settings.MONGO_STATE_WRITES_COLLECTION)
-            collections_deleted.append(settings.MONGO_STATE_WRITES_COLLECTION)
-            logger.info(f"Deleted collection: {settings.MONGO_STATE_WRITES_COLLECTION}")
+        # Clear writes table
+        try:
+            await conn.execute(f"DELETE FROM {settings.POSTGRES_STATE_WRITES_TABLE}")
+            tables_cleared.append(settings.POSTGRES_STATE_WRITES_TABLE)
+            logger.info(f"Cleared table: {settings.POSTGRES_STATE_WRITES_TABLE}")
+        except Exception:
+            logger.warning(
+                f"Table {settings.POSTGRES_STATE_WRITES_TABLE} does not exist or couldn't be cleared"
+            )
 
-        client.close()
+        await conn.close()
 
-        if collections_deleted:
+        if tables_cleared:
             return {
                 "status": "success",
-                "message": f"Successfully deleted collections: {', '.join(collections_deleted)}",
+                "message": f"Successfully cleared tables: {', '.join(tables_cleared)}",
             }
         else:
             return {
                 "status": "success",
-                "message": "No collections needed to be deleted",
+                "message": "No tables needed to be cleared",
             }
 
     except Exception as e:

@@ -1,18 +1,34 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from langchain_core.vectorstores import VectorStoreRetriever
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from langchain_core.documents import Document
 from loguru import logger
 
 from philoagents.application.data import deduplicate_documents, get_extraction_generator
-from philoagents.application.rag.retrievers import Retriever, get_retriever
-from philoagents.application.rag.splitters import Splitter, get_splitter
+from philoagents.application.rag.embeddings import get_embedding_model
+from philoagents.application.rag.retrievers import get_retriever
+from philoagents.application.rag.splitters import get_splitter
 from philoagents.config import settings
 from philoagents.domain.celeb import CelebExtract
-from philoagents.infrastructure.mongo import MongoClientWrapper, MongoIndex
+from philoagents.infrastructure.postgres import PostgresClientWrapper, PostgresIndex
 
 
 class LongTermMemoryCreator:
-    def __init__(self, retriever: Retriever, splitter: Splitter) -> None:
+    def __init__(
+        self, 
+        retriever: "VectorStoreRetriever", 
+        splitter: "RecursiveCharacterTextSplitter"
+    ) -> None:
         self.retriever = retriever
         self.splitter = splitter
+        # Store embedding model separately for accessing embeddings
+        self.embedding_model = get_embedding_model(
+            settings.RAG_TEXT_EMBEDDING_MODEL_ID,
+            settings.RAG_DEVICE
+        )
 
     @classmethod
     def build_from_settings(cls) -> "LongTermMemoryCreator":
@@ -31,11 +47,13 @@ class LongTermMemoryCreator:
 
             return
 
-        # First clear the long term memory collection to avoid duplicates.
-        with MongoClientWrapper(
-            model=Document, collection_name=settings.MONGO_LONG_TERM_MEMORY_COLLECTION
+        # First clear the long term memory table to avoid duplicates.
+        with PostgresClientWrapper(
+            model=Document,
+            table_name=settings.POSTGRES_LONG_TERM_MEMORY_TABLE,
+            embeddings=self.embedding_model,
         ) as client:
-            client.clear_collection()
+            client.clear_table()
 
         extraction_generator = get_extraction_generator(celebs)
         for _, docs in extraction_generator:
@@ -48,12 +66,14 @@ class LongTermMemoryCreator:
         self.__create_index()
 
     def __create_index(self) -> None:
-        with MongoClientWrapper(
-            model=Document, collection_name=settings.MONGO_LONG_TERM_MEMORY_COLLECTION
+        with PostgresClientWrapper(
+            model=Document,
+            table_name=settings.POSTGRES_LONG_TERM_MEMORY_TABLE,
+            embeddings=self.embedding_model,
         ) as client:
-            self.index = MongoIndex(
+            self.index = PostgresIndex(
                 retriever=self.retriever,
-                mongodb_client=client,
+                postgres_client=client,
             )
             self.index.create(
                 is_hybrid=True, embedding_dim=settings.RAG_TEXT_EMBEDDING_MODEL_DIM
@@ -61,7 +81,7 @@ class LongTermMemoryCreator:
 
 
 class LongTermMemoryRetriever:
-    def __init__(self, retriever: Retriever) -> None:
+    def __init__(self, retriever: "VectorStoreRetriever") -> None:
         self.retriever = retriever
 
     @classmethod

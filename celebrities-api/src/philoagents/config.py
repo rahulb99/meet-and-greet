@@ -18,15 +18,15 @@ class Settings(BaseSettings):
     # --- OpenAI Configuration (Required for evaluation) ---
     OPENAI_API_KEY: str
 
-    # --- MongoDB Configuration ---
-    MONGO_URI: str = Field(
-        default="mongodb://celebrities:celebrities@local_dev_atlas:27017/?directConnection=true",
-        description="Connection URI for the local MongoDB Atlas instance.",
+    # --- PostgreSQL Configuration ---
+    POSTGRES_URI: str = Field(
+        default="postgres://celebrities:celebrities@postgres:5432/celebrities?sslmode=disable",
+        description="Connection URI for the PostgreSQL instance.",
     )
-    MONGO_DB_NAME: str = "celebrities"
-    MONGO_STATE_CHECKPOINT_COLLECTION: str = "celeb_state_checkpoints"
-    MONGO_STATE_WRITES_COLLECTION: str = "celeb_state_writes"
-    MONGO_LONG_TERM_MEMORY_COLLECTION: str = "celeb_long_term_memory"
+    POSTGRES_DB_NAME: str = "celebrities"
+    POSTGRES_STATE_CHECKPOINT_TABLE: str = "celeb_state_checkpoints"
+    POSTGRES_STATE_WRITES_TABLE: str = "celeb_state_writes"
+    POSTGRES_LONG_TERM_MEMORY_TABLE: str = "celeb_long_term_memory"
 
     # --- Comet ML & Opik Configuration ---
     COMET_API_KEY: str | None = Field(

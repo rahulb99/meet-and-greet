@@ -1,23 +1,23 @@
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_mongodb import MongoDBAtlasVectorSearch
-from langchain_mongodb.retrievers import (
-    MongoDBAtlasHybridSearchRetriever,
-)
-from loguru import logger
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from langchain_core.vectorstores import VectorStoreRetriever
+    from langchain_huggingface import HuggingFaceEmbeddings
 
 from philoagents.config import settings
 
 from .embeddings import get_embedding_model
 
-Retriever = MongoDBAtlasHybridSearchRetriever
+# Type alias for the retriever - using basic VectorStore retriever for now
+Retriever = "VectorStoreRetriever"
 
 
 def get_retriever(
     embedding_model_id: str,
     k: int = 3,
     device: str = "cpu",
-) -> Retriever:
-    """Creates and returns a hybrid search retriever with the specified embedding model.
+) -> "VectorStoreRetriever":
+    """Creates and returns a retriever with the specified embedding model.
 
     Args:
         embedding_model_id (str): The identifier for the embedding model to use.
@@ -25,8 +25,10 @@ def get_retriever(
         device (str, optional): Device to run the embedding model on. Defaults to "cpu".
 
     Returns:
-        Retriever: A configured hybrid search retriever.
+        VectorStoreRetriever: A configured search retriever.
     """
+    from loguru import logger
+
     logger.info(
         f"Initializing retriever | model: {embedding_model_id} | device: {device} | top_k: {k}"
     )
@@ -37,33 +39,38 @@ def get_retriever(
 
 
 def get_hybrid_search_retriever(
-    embedding_model: HuggingFaceEmbeddings, k: int
-) -> MongoDBAtlasHybridSearchRetriever:
-    """Creates a MongoDB Atlas hybrid search retriever with the given embedding model.
+    embedding_model: "HuggingFaceEmbeddings", k: int
+) -> "VectorStoreRetriever":
+    """Creates a PostgreSQL retriever with the given embedding model.
 
     Args:
         embedding_model (HuggingFaceEmbeddings): The embedding model to use for vector search.
         k (int): Number of documents to retrieve.
 
     Returns:
-        MongoDBAtlasHybridSearchRetriever: A configured hybrid search retriever using both
-            vector and text search capabilities.
+        VectorStoreRetriever: A configured search retriever.
     """
-    vectorstore = MongoDBAtlasVectorSearch.from_connection_string(
-        connection_string=settings.MONGO_URI,
-        embedding=embedding_model,
-        namespace=f"{settings.MONGO_DB_NAME}.{settings.MONGO_LONG_TERM_MEMORY_COLLECTION}",
-        text_key="chunk",
-        embedding_key="embedding",
-        relevance_score_fn="dotProduct",
+    from langchain_postgres import PGEngine, PGVectorStore
+
+    # Create the PG engine
+    engine = PGEngine.from_connection_string(url=settings.POSTGRES_URI)
+
+    # # Initialize the vector store table with proper schema
+    engine.init_vectorstore_table(
+        table_name=settings.POSTGRES_LONG_TERM_MEMORY_TABLE,
+        overwrite_existing=True,
+        vector_size=settings.RAG_TEXT_EMBEDDING_MODEL_DIM,
     )
 
-    retriever = MongoDBAtlasHybridSearchRetriever(
-        vectorstore=vectorstore,
-        search_index_name="hybrid_search_index",
-        top_k=k,
-        vector_penalty=50,
-        fulltext_penalty=50,
+    # Create the vector store
+    vectorstore = PGVectorStore.create_sync(
+        engine=engine,
+        table_name=settings.POSTGRES_LONG_TERM_MEMORY_TABLE,
+        embedding_service=embedding_model,
+        distance_strategy="cosine",
     )
+
+    # Return the vector store as a retriever
+    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
 
     return retriever
