@@ -85,9 +85,7 @@ def extract_wikipedia(celeb: Celeb) -> list[Document]:
     return docs
 
 
-def extract_brittanica(
-    celeb: Celeb, urls: list[str]
-) -> list[Document]:
+def extract_brittanica(celeb: Celeb, urls: list[str]) -> list[Document]:
     """Extract documents for a single celeb from Stanford Encyclopedia of Philosophy.
 
     Args:
@@ -134,7 +132,7 @@ if __name__ == "__main__":
         trump,
         [
             "https://www.britannica.com/biography/Donald-Trump",
-            "https://www.britannica.com/biography/Donald-Trump"
+            "https://www.britannica.com/biography/Donald-Trump",
         ],
     )
     print(docs)

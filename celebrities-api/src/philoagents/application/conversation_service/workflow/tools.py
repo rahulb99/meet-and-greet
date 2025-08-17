@@ -7,7 +7,8 @@ from philoagents.config import settings
 retriever = get_retriever(
     embedding_model_id=settings.RAG_TEXT_EMBEDDING_MODEL_ID,
     k=settings.RAG_TOP_K,
-    device=settings.RAG_DEVICE)
+    device=settings.RAG_DEVICE,
+)
 
 retriever_tool = create_retriever_tool(
     retriever,
@@ -15,6 +16,8 @@ retriever_tool = create_retriever_tool(
     "Search and return information about a specific celeb. Always use this tool when the user asks you about a celeb, their work, accomplishments or journey.",
 )
 
-duckduckgo_search_tool = DuckDuckGoSearchRun(description="Always use this tool when the user asks about latest/current information about a celeb or their work.")
+duckduckgo_search_tool = DuckDuckGoSearchRun(
+    description="Always use this tool when the user asks about latest/current information about a celeb or their work."
+)
 
 tools = [retriever_tool, duckduckgo_search_tool]
