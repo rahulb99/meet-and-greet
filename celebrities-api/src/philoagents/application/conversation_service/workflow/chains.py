@@ -15,7 +15,7 @@ def get_chat_model(temperature: float = 0.7, model_name: str = settings.GROQ_LLM
     return ChatGroq(
         api_key=settings.GROQ_API_KEY,
         model_name=model_name,
-        temperature=temperature,
+        temperature=temperature
     )
 
 

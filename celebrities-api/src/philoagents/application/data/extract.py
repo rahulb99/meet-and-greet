@@ -85,9 +85,7 @@ def extract_wikipedia(celeb: Celeb) -> list[Document]:
     return docs
 
 
-def extract_brittanica(
-    celeb: Celeb, urls: list[str]
-) -> list[Document]:
+def extract_brittanica(celeb: Celeb, urls: list[str]) -> list[Document]:
     """Extract documents for a single celeb from Stanford Encyclopedia of Philosophy.
 
     Args:
@@ -99,38 +97,6 @@ def extract_brittanica(
     """
 
     def extract_paragraphs_and_headers(soup) -> str:
-        # List of class/id names specific to the Stanford Encyclopedia of Philosophy that we want to exclude.
-        excluded_sections = [
-            "bibliography",
-            "academic-tools",
-            "other-internet-resources",
-            "related-entries",
-            "acknowledgments",
-            "article-copyright",
-            "article-banner",
-            "footer",
-        ]
-
-        # Find and remove elements within excluded sections
-        for section_name in excluded_sections:
-            for section in soup.find_all(id=section_name):
-                section.decompose()
-
-            for section in soup.find_all(class_=section_name):
-                section.decompose()
-
-            for section in soup.find_all(
-                lambda tag: tag.has_attr("id") and section_name in tag["id"].lower()
-            ):
-                section.decompose()
-
-            for section in soup.find_all(
-                lambda tag: tag.has_attr("class")
-                and any(section_name in cls.lower() for cls in tag["class"])
-            ):
-                section.decompose()
-
-        # Extract remaining paragraphs and headers
         content = []
         for element in soup.find_all("p.topic-paragraph"):
             content.append(element.get_text())
@@ -166,7 +132,7 @@ if __name__ == "__main__":
         trump,
         [
             "https://www.britannica.com/biography/Donald-Trump",
-            "https://www.britannica.com/biography/Donald-Trump"
+            "https://www.britannica.com/biography/Donald-Trump",
         ],
     )
     print(docs)
